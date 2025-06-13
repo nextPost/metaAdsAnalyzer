@@ -37,6 +37,7 @@ import {
   Target // Still used for one of the benefits
 } from 'lucide-react';
 import ReportDisplay from './ReportDisplay'; // Keep this import
+import SectionStep from './SectionStep';
 
 // --- API Endpoint for Report Data ---
 // This endpoint now correctly points to the JSON API that provides the report data
@@ -284,7 +285,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
   // Handle loading and error states for report data fetching
   if (isLoadingReport) {
     return (
-      <div className="bg-slate-900 p-6 rounded-xl shadow-2xl text-center text-slate-300 min-h-[400px] flex items-center justify-center">
+      <div className="bg-[#0a1419] p-6 rounded-xl shadow-2xl text-center text-slate-300 min-h-[400px] flex items-center justify-center">
         Loading report data...
       </div>
     );
@@ -292,7 +293,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
 
   if (reportError) {
     return (
-      <div className="bg-slate-900 p-6 rounded-xl shadow-2xl text-center text-red-400 min-h-[400px] flex items-center justify-center">
+      <div className="bg-[#0a1419] p-6 rounded-xl shadow-2xl text-center text-red-400 min-h-[400px] flex items-center justify-center">
         Error loading report: {reportError}
       </div>
     );
@@ -300,215 +301,207 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
 
   // Main render logic
   return (
-    <div className="bg-slate-900 p-4 md:p-6 rounded-xl shadow-2xl text-slate-200 font-sans">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold text-slate-100">Report Overview</h2>
-          <div className="flex items-center text-xs font-semibold">
-            <span className="bg-[#FF6B45] text-white w-5 h-5 rounded-full flex items-center justify-center mr-1.5 text-sm">2</span>
-            <span className="text-slate-300"><span className="opacity-75 text-slate-400">of</span> 3</span>
-          </div>
-        </div>
-        <div className="w-full bg-slate-700 rounded-full h-1.5">
-          <div className="bg-[#FF6B45] h-1.5 rounded-full" style={{ width: '66.67%' }}></div>
-        </div>
-      </div>
-
-      {/* Back to Brand Selection Button */}
-      <div className="mb-4">
-        <button
-          onClick={onBackToSelection}
-          className="flex items-center text-slate-400 hover:text-slate-200 transition-colors"
-        >
-          <ChevronLeft size={18} className="mr-1" /> Back to Brand Selection
-        </button>
-      </div>
-
-      {/* Brand Info */}
-      <div className="flex items-center mb-6 md:mb-8">
-        <img
-          src={displayReportData.logoUrl}
-          alt="Brand Logo"
-          className="w-12 h-12 md:w-16 md:h-16 rounded-md mr-4 object-cover bg-white p-1"
-          onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/64x64/7f1d1d/FFFFFF?text=ERR&font=Inter`; }}
-        />
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-white">{displayReportData.brandName}</h1>
-          <p className="text-sm md:text-base text-slate-400">{displayReportData.brandCategory}</p>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 md:mb-8 text-center">
-        {animatedStats.map((stat, index) => (
-          <div key={index} className="bg-slate-800 p-3 md:p-4 rounded-lg flex flex-col items-center justify-center">
-            <stat.icon size={24} className="mb-2 text-[#FF6B45]" />
-            <p className="text-2xl md:text-3xl font-bold text-white">{stat.animatedValue}</p>
-            <p className="text-xs md:text-sm text-slate-400">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Overviews */}
-      <div className="space-y-6 mb-6 md:mb-8">
-        {displayReportData.overviews.map((overview, index) => {
-          const IconComponent = overview.icon;
-          return (
-            <div key={index} className="flex items-start">
-              <div className="flex-shrink-0 mr-3 md:mr-4">
-                <IconComponent size={20} className="text-[#FF6B45] mt-1" />
-              </div>
-              <div>
-                <h3 className="text-base md:text-lg font-semibold text-white mb-0.5">{overview.title}</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">{overview.text}</p>
-              </div>
+    <div className="w-full max-w-[960px] mx-auto px-2 sm:px-4">
+      <div className="relative">
+        {/* Main content */}
+        <div className="p-4 md:p-6 text-slate-200 font-sans">
+          <SectionStep step={2} totalSteps={3} title="View Details" progressPercent="66.67%">
+            {/* Back to Brand Selection Button */}
+            <div className="mb-4">
+              <button
+                onClick={onBackToSelection}
+                className="flex items-center text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                <ChevronLeft size={18} className="mr-1" /> Back to Brand Selection
+              </button>
             </div>
-          );
-        })}
-      </div>
-
-      <hr className="border-slate-700 my-6 md:my-8" />
-
-      {/* Report Contents Carousel */}
-      <div className="mb-6 md:mb-8">
-        <h3 className="text-lg md:text-xl font-semibold text-white mb-4 text-center md:text-left">Report Contents</h3>
-        <div className="relative">
-          <div className="overflow-hidden" ref={contentCarouselRef}>
-            <div
-              className="flex transition-transform duration-300 ease-in-out"
-              style={{ transform: `translateX(-${currentVisibleItemIndex * (100 / itemsPerView)}%)` }}
-            >
-              {displayReportData.reportContents.map((content, itemIndex) => (
-                <div
-                  key={itemIndex}
-                  className="flex-shrink-0 p-2"
-                  style={{ width: `${100 / itemsPerView}%` }}
-                >
-                  <div className="bg-slate-800 p-4 rounded-lg flex flex-col items-center text-center md:items-start md:text-left h-full hover:bg-slate-700/80 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6B45]/10 transition-all duration-300 ease-in-out cursor-default">
-                    <div className="mb-3">{content.icon}</div>
-                    <h4 className="text-md font-semibold text-white mb-1">{content.title}</h4>
-                    <p className="text-xs text-slate-400 leading-normal flex-grow">{content.description}</p>
-                  </div>
-                </div>
-              ))}
+          </SectionStep>
+          {/* Brand Info */}
+          <div className="flex items-center mb-6 md:mb-8">
+            <img
+              src={displayReportData.logoUrl}
+              alt="Brand Logo"
+              className="w-12 h-12 md:w-16 md:h-16 rounded-md mr-4 object-cover bg-white p-1"
+              onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/64x64/7f1d1d/FFFFFF?text=ERR&font=Inter`; }}
+            />
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-white">{displayReportData.brandName}</h1>
+              <p className="text-sm md:text-base text-slate-400">{displayReportData.brandCategory}</p>
             </div>
           </div>
-          {displayReportData.reportContents.length > itemsPerView && (
-            <>
-              <button
-                onClick={handlePrevContentItem}
-                disabled={currentVisibleItemIndex === 0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 bg-slate-700 hover:bg-[#FF6B45] text-white p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all z-10"
-                aria-label="Previous content item">
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={handleNextContentItem}
-                disabled={currentVisibleItemIndex >= displayReportData.reportContents.length - itemsPerView}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 bg-slate-700 hover:bg-[#FF6B45] text-white p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all z-10"
-                aria-label="Next content item">
-                <ChevronRight size={20} />
-              </button>
-            </>
-          )}
-        </div>
-        {displayReportData.reportContents.length > itemsPerView && totalCarouselPages > 1 && (
-          <div className="flex justify-center mt-6 space-x-1.5">
-            {Array.from({ length: totalCarouselPages }).map((_, idx) => (
-              <button
-                key={`content-dot-${idx}`}
-                onClick={() => handleContentDotClick(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${currentVisibleItemIndex === idx ? 'bg-[#FF6B45] scale-125' : 'bg-slate-600 hover:bg-slate-500'}`}
-                aria-label={`Go to content view starting at item ${idx + 1}`}
-              />
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 md:mb-8 text-center">
+            {animatedStats.map((stat, index) => (
+              <div key={index} className="bg-[#0a1419] p-3 md:p-4 rounded-lg flex flex-col items-center justify-center">
+                <stat.icon size={24} className="mb-2 text-[#FF6B45]" />
+                <p className="text-2xl md:text-3xl font-bold text-white">{stat.animatedValue}</p>
+                <p className="text-xs md:text-sm text-slate-400">{stat.label}</p>
+              </div>
             ))}
           </div>
-        )}
-      </div>
 
-      {/* Get Instant Access Section */}
-      <div className="border-t border-slate-700/70 pt-6 mt-8">
-        <div className="flex items-center mb-1">
-            <h3 className="text-lg md:text-xl font-semibold text-white">Get Instant Access</h3>
-        </div>
-
-        {/* --- CONDITIONAL RENDERING HERE --- */}
-        {isValidationComplete && accessedReportUrl ? (
-          // If validation is complete and we have a URL, show the ReportDisplay
-          <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
-        ) : (
-          // Otherwise, show the email/code forms
-          <>
-            {/* Email Form */}
-            <form onSubmit={handleEmailSubmit} className="space-y-3">
-              {!isAwaitingCode && (
-                 <p className="text-sm text-slate-400">Enter your email to receive the complete {displayReportData.brandName} Meta Ads Analysis report.</p>
-              )}
-              <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-                <div className="relative flex-grow">
-                  <Mail size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isAwaitingCode || isLoadingEmail}
-                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                  />
+          {/* Overviews */}
+          <div className="space-y-6 mb-6 md:mb-8">
+            {displayReportData.overviews.map((overview, index) => {
+              const IconComponent = overview.icon;
+              return (
+                <div key={index} className="flex items-start">
+                  <div className="flex-shrink-0 mr-3 md:mr-4">
+                    <IconComponent size={20} className="text-[#FF6B45] mt-1" />
+                  </div>
+                  <div>
+                    <h3 className="text-base md:text-lg font-semibold text-white mb-0.5">{overview.title}</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">{overview.text}</p>
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  disabled={isAwaitingCode || isLoadingEmail}
-                  className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              );
+            })}
+          </div>
+
+          <hr className="border-slate-700 my-6 md:my-8" />
+
+          {/* Report Contents Carousel */}
+          <div className="mb-6 md:mb-8">
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-4 text-center md:text-left">Report Contents</h3>
+            <div className="relative">
+              <div className="overflow-hidden" ref={contentCarouselRef}>
+                <div
+                  className="flex transition-transform duration-300 ease-in-out"
+                  style={{ transform: `translateX(-${currentVisibleItemIndex * (100 / itemsPerView)}%)` }}
                 >
-                  {isLoadingEmail ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Send size={18} className="mr-2 hidden sm:inline" />}
-                  {isAwaitingCode ? "Email Submitted" : "Get Report Access"}
-                </button>
+                  {displayReportData.reportContents.map((content, itemIndex) => (
+                    <div
+                      key={itemIndex}
+                      className="flex-shrink-0 p-2"
+                      style={{ width: `${100 / itemsPerView}%` }}
+                    >
+                      <div className="bg-[#0a1419] p-4 rounded-lg flex flex-col items-center text-center md:items-start md:text-left h-full hover:bg-[#0f1e25] transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6B45]/10 transition-all duration-300 ease-in-out cursor-default">
+                        <div className="mb-3">{content.icon}</div>
+                        <h4 className="text-md font-semibold text-white mb-1">{content.title}</h4>
+                        <p className="text-xs text-slate-400 leading-normal flex-grow">{content.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              {feedbackMessage.text && feedbackMessage.context === 'email' && (
-                <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : feedbackMessage.type === 'success' ? 'text-green-400' : 'text-slate-400'}`}>
-                  {feedbackMessage.text}
-                </div>
-              )}
-            </form>
-
-            {/* Validation Code Form - appears below email form when isAwaitingCode is true */}
-            {isAwaitingCode && (
-              <form onSubmit={handleCodeSubmit} className="space-y-3 mt-6 pt-4 border-t border-slate-700/50">
-                 <p className="text-sm text-slate-300">Please check {email} for a validation code.</p>
-                <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-                  <div className="relative flex-grow">
-                    <KeyRound size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                    <input
-                      type="text"
-                      placeholder="Enter validation code"
-                      value={validationCode}
-                      onChange={(e) => setValidationCode(e.target.value)}
-                      required
-                      disabled={isLoadingCode}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70"
-                    />
-                  </div>
+              {displayReportData.reportContents.length > itemsPerView && (
+                <>
                   <button
-                    type="submit"
-                    disabled={isLoadingCode}
-                    className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoadingCode ? <Loader2 size={18} className="mr-2 animate-spin" /> : <CheckCircle size={18} className="mr-2 hidden sm:inline" />}
-                    Validate Code
+                    onClick={handlePrevContentItem}
+                    disabled={currentVisibleItemIndex === 0}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 bg-slate-700 hover:bg-[#FF6B45] text-white p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all z-10"
+                    aria-label="Previous content item">
+                    <ChevronLeft size={20} />
                   </button>
-                </div>
-                {feedbackMessage.text && feedbackMessage.context === 'code' && (
-                  <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : 'text-slate-400'}`}>
-                    {feedbackMessage.text}
-                  </div>
-                )}
-              </form>
+                  <button
+                    onClick={handleNextContentItem}
+                    disabled={currentVisibleItemIndex >= displayReportData.reportContents.length - itemsPerView}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 bg-slate-700 hover:bg-[#FF6B45] text-white p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all z-10"
+                    aria-label="Next content item">
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
+            </div>
+            {displayReportData.reportContents.length > itemsPerView && totalCarouselPages > 1 && (
+              <div className="flex justify-center mt-6 space-x-1.5">
+                {Array.from({ length: totalCarouselPages }).map((_, idx) => (
+                  <button
+                    key={`content-dot-${idx}`}
+                    onClick={() => handleContentDotClick(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentVisibleItemIndex === idx ? 'bg-[#FF6B45] scale-125' : 'bg-slate-600 hover:bg-slate-500'}`}
+                    aria-label={`Go to content view starting at item ${idx + 1}`}
+                  />
+                ))}
+              </div>
             )}
-          </>
-        )}
+          </div>
+
+          {/* Get Instant Access Section */}
+          <div className="border-t border-slate-700/70 pt-6 mt-8">
+            <div className="flex items-center mb-1">
+                <h3 className="text-lg md:text-xl font-semibold text-white">Get Instant Access</h3>
+            </div>
+
+            {/* --- CONDITIONAL RENDERING HERE --- */}
+            {isValidationComplete && accessedReportUrl ? (
+              // If validation is complete and we have a URL, show the ReportDisplay
+              <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
+            ) : (
+              // Otherwise, show the email/code forms
+              <>
+                {/* Email Form */}
+                <form onSubmit={handleEmailSubmit} className="space-y-3">
+                  {!isAwaitingCode && (
+                     <p className="text-sm text-slate-400">Enter your email to receive the complete {displayReportData.brandName} Meta Ads Analysis report.</p>
+                  )}
+                  <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                    <div className="relative flex-grow">
+                      <Mail size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                      <input
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        disabled={isAwaitingCode || isLoadingEmail}
+                        className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isAwaitingCode || isLoadingEmail}
+                      className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoadingEmail ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Send size={18} className="mr-2 hidden sm:inline" />}
+                      {isAwaitingCode ? "Email Submitted" : "Get Report Access"}
+                    </button>
+                  </div>
+                  {feedbackMessage.text && feedbackMessage.context === 'email' && (
+                    <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : feedbackMessage.type === 'success' ? 'text-green-400' : 'text-slate-400'}`}>
+                      {feedbackMessage.text}
+                    </div>
+                  )}
+                </form>
+
+                {/* Validation Code Form - appears below email form when isAwaitingCode is true */}
+                {isAwaitingCode && (
+                  <form onSubmit={handleCodeSubmit} className="space-y-3 mt-6 pt-4 border-t border-slate-700/50">
+                     <p className="text-sm text-slate-300">Please check {email} for a validation code.</p>
+                    <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                      <div className="relative flex-grow">
+                        <KeyRound size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                        <input
+                          type="text"
+                          placeholder="Enter validation code"
+                          value={validationCode}
+                          onChange={(e) => setValidationCode(e.target.value)}
+                          required
+                          disabled={isLoadingCode}
+                          className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isLoadingCode}
+                        className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isLoadingCode ? <Loader2 size={18} className="mr-2 animate-spin" /> : <CheckCircle size={18} className="mr-2 hidden sm:inline" />}
+                        Validate Code
+                      </button>
+                    </div>
+                    {feedbackMessage.text && feedbackMessage.context === 'code' && (
+                      <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : 'text-slate-400'}`}>
+                        {feedbackMessage.text}
+                      </div>
+                    )}
+                  </form>
+                )}
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
