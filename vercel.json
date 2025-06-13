@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/metaAnalysis",
-      "destination": "/"
+      "destination": "/index.html"
     },
     {
       "source": "/metaAnalysis/:path*",
@@ -12,6 +12,23 @@
   "headers": [
     {
       "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/metaAnalysis/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
