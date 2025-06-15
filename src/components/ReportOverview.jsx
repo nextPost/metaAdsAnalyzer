@@ -235,16 +235,24 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
     setFeedbackMessage({ text: '', type: '', context: 'email' });
     setIsLoadingEmail(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`https://api.antelopeinc.com/chatbots/validate.php?origin=metaAds&email=${encodeURIComponent(email)}`);
+      const result = await response.json();
 
-    if (email && email.includes('@')) {
-      console.log("Email submitted for validation:", email);
-      setIsAwaitingCode(true);
-      setFeedbackMessage({ text: `A validation code would be sent to ${email}. (For demo, use "CODE")`, type: 'info', context: 'email' });
-    } else {
-      setFeedbackMessage({ text: "Please enter a valid email address.", type: 'error', context: 'email' });
+      if (result.success) {
+        console.log("Email validation successful:", result.msg);
+        setIsAwaitingCode(true);
+        setFeedbackMessage({ text: result.msg, type: 'info', context: 'email' });
+      } else {
+        console.error("Email validation failed:", result.msg);
+        setFeedbackMessage({ text: result.msg, type: 'error', context: 'email' });
+      }
+    } catch (error) {
+      console.error("Error during email validation:", error);
+      setFeedbackMessage({ text: "An error occurred while validating your email. Please try again.", type: 'error', context: 'email' });
+    } finally {
+      setIsLoadingEmail(false);
     }
-    setIsLoadingEmail(false);
   };
 
   const handleCodeSubmit = async (e) => {
@@ -252,25 +260,44 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
     setFeedbackMessage({ text: '', type: '', context: 'code' });
     setIsLoadingCode(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`https://api.antelopeinc.com/chatbots/validate.php?origin=metaAds&email=${encodeURIComponent(email)}&code=${encodeURIComponent(validationCode)}`);
+      const result = await response.json();
 
-    if (validationCode === "CODE") {
-      console.log("Code validation successful");
-      setIsValidationComplete(true);
-      setIsAwaitingCode(false);
-      // --- IMPORTANT: Set the accessedReportUrl from the fetched reportData ---
-      if (reportData && reportData.reportURL) {
-        setAccessedReportUrl(reportData.reportURL);
-        console.log("Report URL set from fetched data:", reportData.reportURL);
+      if (result.success) {
+        console.log("Code validation successful:", result.msg);
+        setIsValidationComplete(true);
+        setIsAwaitingCode(false);
+        
+        // Set the accessedReportUrl from the fetched reportData
+        if (reportData && reportData.reportURL) {
+          setAccessedReportUrl(reportData.reportURL);
+          console.log("Report URL set from fetched data:", reportData.reportURL);
+          
+          // Call the send action with the handle
+          try {
+            const sendResponse = await fetch(`https://api.antelopeinc.com/chatbots/adsStrategyAnalyzer_testing?origin=slides&action=send&handle=${encodeURIComponent(reportData.handle)}&libID=999&email=${encodeURIComponent(email)}`);
+            const sendResult = await sendResponse.json();
+            console.log("Send action response:", sendResult);
+          } catch (sendError) {
+            console.error("Error during send action:", sendError);
+            // Don't show error to user as this is a background operation
+          }
+        } else {
+          console.error("Cannot set report URL: reportData or reportURL is missing after validation.");
+          setFeedbackMessage({ text: "Report URL not found. Please try again.", type: 'error', context: 'code' });
+        }
       } else {
-        console.error("Cannot set report URL: reportData or reportURL is missing after validation.");
-        setFeedbackMessage({ text: "Report URL not found. Please try again.", type: 'error', context: 'code' });
+        console.error("Code validation failed:", result.msg);
+        setFeedbackMessage({ text: result.msg, type: 'error', context: 'code' });
+        setValidationCode('');
       }
-    } else {
-      setFeedbackMessage({ text: "Invalid code. Please try again. (Hint: use \"CODE\")", type: 'error', context: 'code' });
-      setValidationCode('');
+    } catch (error) {
+      console.error("Error during code validation:", error);
+      setFeedbackMessage({ text: "An error occurred while validating your code. Please try again.", type: 'error', context: 'code' });
+    } finally {
+      setIsLoadingCode(false);
     }
-    setIsLoadingCode(false);
   };
 
   useEffect(() => {
