@@ -239,7 +239,24 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
     try {
       const response = await fetch(
         `https://api.antelopeinc.com/chatbots/validate?origin=metaAds&email=${encodeURIComponent(email)}`, 
-        {headers: {'Origin': window.location.origin}}
+        {
+          method: 'POST',
+          headers: {
+            'Origin': window.location.origin,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            subject: `Your ${selectedBrand.name} Meta Ads Analysis is Ready`,
+            body: `Thank you for your interest in our Meta Ads Competitive Analysis.
+
+Your ${selectedBrand.name} competitive analysis is ready. Please enter the code below to access your report:
+
+Code: {{passcode}}
+
+Thank you,
+Daniel @ Antelope`
+          })
+        }
       );
       const result = await response.json();
 
@@ -275,7 +292,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
       if (result.success) {
         console.log("Code validation successful:", result.msg);
         setFeedbackMessage({ text: result.msg, type: 'success', context: 'code' });
-        setIsValidationComplete(true);
+      setIsValidationComplete(true);
         // Scroll code validation section into view
         setTimeout(() => {
           if (codeValidationRef.current) {
@@ -283,9 +300,9 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
           }
         }, 100); // slight delay to ensure DOM updates
         // Set the accessedReportUrl from the fetched reportData
-        if (reportData && reportData.reportURL) {
-          setAccessedReportUrl(reportData.reportURL);
-          console.log("Report URL set from fetched data:", reportData.reportURL);
+      if (reportData && reportData.reportURL) {
+        setAccessedReportUrl(reportData.reportURL);
+        console.log("Report URL set from fetched data:", reportData.reportURL);
           
           // Call the send action with the handle
           try {
@@ -299,21 +316,21 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
             console.error("Error during send action:", sendError);
             // Don't show error to user as this is a background operation
           }
-        } else {
-          console.error("Cannot set report URL: reportData or reportURL is missing after validation.");
-          setFeedbackMessage({ text: "Report URL not found. Please try again.", type: 'error', context: 'code' });
-        }
       } else {
+        console.error("Cannot set report URL: reportData or reportURL is missing after validation.");
+        setFeedbackMessage({ text: "Report URL not found. Please try again.", type: 'error', context: 'code' });
+      }
+    } else {
         console.error("Code validation failed:", result.msg);
         setFeedbackMessage({ text: result.msg, type: 'error', context: 'code' });
         console.log("Setting feedback message:", { text: result.msg, type: 'error', context: 'code' });
-        setValidationCode('');
-      }
+      setValidationCode('');
+    }
     } catch (error) {
       console.error("Error during code validation:", error);
       setFeedbackMessage({ text: "An error occurred while validating your code. Please try again.", type: 'error', context: 'code' });
     } finally {
-      setIsLoadingCode(false);
+    setIsLoadingCode(false);
     }
   };
 
@@ -492,13 +509,13 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          disabled={isAwaitingCode || isLoadingEmail}
+                          disabled={isLoadingEmail}
                           className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                         />
                       </div>
                       <button
                         type="submit"
-                        disabled={isAwaitingCode || isLoadingEmail}
+                        disabled={isLoadingEmail}
                         className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isLoadingEmail ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Send size={18} className="mr-2 hidden sm:inline" />}
@@ -546,7 +563,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
                     </form>
                   )}
                 </div>
-                <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
+              <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
               </>
             ) : (
               // Original form display for when validation is not complete
@@ -565,13 +582,13 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        disabled={isAwaitingCode || isLoadingEmail}
+                        disabled={isLoadingEmail}
                         className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                       />
                     </div>
                     <button
                       type="submit"
-                      disabled={isAwaitingCode || isLoadingEmail}
+                      disabled={isLoadingEmail}
                       className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoadingEmail ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Send size={18} className="mr-2 hidden sm:inline" />}

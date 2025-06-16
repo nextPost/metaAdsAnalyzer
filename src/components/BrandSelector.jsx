@@ -206,6 +206,7 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
               category: item.category || 'N/A',
               quality: item.quality || 'N/A',
               handle: item.handle || item.brand.replace(/\s+/g, '').toLowerCase(),
+              reportUrl: item.reportURL
             };
           });
           setAllBrands(transformedBrands);
@@ -402,9 +403,12 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
                             onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/64x64/7f1d1d/FFFFFF?text=ERR&font=Inter`; }}/>
                           <p className="text-xs text-slate-200 font-medium text-center truncate w-full mb-2 flex-grow">{sample.name}</p>
                           <button
-                            onClick={() => handleSampleSelect(sample)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.open(sample.reportUrl, '_blank', 'noopener,noreferrer');
+                            }}
                             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 sm:w-36 max-w-full h-10 bg-[#ff6b45] text-white text-xs font-semibold rounded-md opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-200 ease-in-out flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#ff6b45]"
-                            aria-label={`Open report for ${sample.name}`}
+                            aria-label={`Open report for ${sample.name} in new tab`}
                           >
                             <FileText size={14} className="mr-1.5" /> Open Report
                           </button>
