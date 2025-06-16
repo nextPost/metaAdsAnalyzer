@@ -28,13 +28,11 @@ function App() {
       <Header />
       <main className="container mx-auto px-1 sm:px-4 py-8">
         <div className="flex flex-col items-center w-full">
-          {!selectedBrand && (
-            <div className="text-center mb-8 sm:mb-12 px-1 sm:px-4">
-              <h2 className="text-[#ff6b45] text-sm uppercase tracking-wider mb-2">Antelope Analytics</h2>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-4">Meta Ads Analyzer</h1>
-              <p className="text-gray-400 max-w-2xl mx-auto">Select a brand from the leaderboard below to begin your Meta Ads analysis.</p>
-            </div>
-          )}
+          <div className="text-center mb-8 sm:mb-12 px-1 sm:px-4">
+            <h2 className="text-[#ff6b45] text-sm uppercase tracking-wider mb-2">Antelope Analytics</h2>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-4">Meta Ads Analyzer</h1>
+            <p className="text-gray-400 max-w-2xl mx-auto">Get a powerful analysis of over 1000 top brands' Meta advertising strategies, reverse-engineering their creative concepts, channel execution and monetization tactics to reveal what drives real business results</p>
+          </div>
 
           <div className="w-full max-w-[960px] px-2 sm:px-4">
             <div className="bg-[#0f1e25] rounded-lg border border-gray-800 w-full max-w-full">
