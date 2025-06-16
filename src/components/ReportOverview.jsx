@@ -283,7 +283,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
           // Call the send action with the handle
           try {
             const sendResponse = await fetch(
-              `https://api.antelopeinc.com/chatbots/adsStrategyAnalyzer_testing?origin=slides&action=send&handle=${encodeURIComponent(reportData.handle)}&libID=999&email=${encodeURIComponent(email)}`, 
+              `https://api.antelopeinc.com/chatbots/adsStrategyAnalyzer_testing?origin=slides&action=send&handle=${encodeURIComponent(selectedBrand.handle)}&libID=999&email=${encodeURIComponent(email)}`, 
               {headers: {'Origin': window.location.origin}}
             );
             const sendResult = await sendResponse.json();
