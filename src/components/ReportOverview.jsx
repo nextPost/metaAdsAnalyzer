@@ -236,7 +236,10 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
     setIsLoadingEmail(true);
 
     try {
-      const response = await fetch(`https://api.antelopeinc.com/chatbots/validate.php?origin=metaAds&email=${encodeURIComponent(email)}`);
+      const response = await fetch(
+        `https://api.antelopeinc.com/chatbots/validate?origin=metaAds&email=${encodeURIComponent(email)}`, 
+        {headers: {'Origin': window.location.origin}}
+      );
       const result = await response.json();
 
       if (result.success) {
@@ -261,7 +264,10 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
     setIsLoadingCode(true);
 
     try {
-      const response = await fetch(`https://api.antelopeinc.com/chatbots/validate.php?origin=metaAds&email=${encodeURIComponent(email)}&code=${encodeURIComponent(validationCode)}`);
+      const response = await fetch(
+        `https://api.antelopeinc.com/chatbots/validate?origin=metaAds&email=${encodeURIComponent(email)}&code=${encodeURIComponent(validationCode)}`,
+        {headers: {'Origin': window.location.origin}}
+      );
       const result = await response.json();
 
       if (result.success) {
@@ -276,7 +282,10 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
           
           // Call the send action with the handle
           try {
-            const sendResponse = await fetch(`https://api.antelopeinc.com/chatbots/adsStrategyAnalyzer_testing?origin=slides&action=send&handle=${encodeURIComponent(reportData.handle)}&libID=999&email=${encodeURIComponent(email)}`);
+            const sendResponse = await fetch(
+              `https://api.antelopeinc.com/chatbots/adsStrategyAnalyzer_testing?origin=slides&action=send&handle=${encodeURIComponent(reportData.handle)}&libID=999&email=${encodeURIComponent(email)}`, 
+              {headers: {'Origin': window.location.origin}}
+            );
             const sendResult = await sendResponse.json();
             console.log("Send action response:", sendResult);
           } catch (sendError) {
