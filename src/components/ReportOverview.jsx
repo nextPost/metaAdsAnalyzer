@@ -206,6 +206,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
   const [currentVisibleItemIndex, setCurrentVisibleItemIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const contentCarouselRef = useRef(null);
+  const codeValidationRef = useRef(null); // Add ref for code validation section
 
   useEffect(() => {
     const updateItemsPerView = () => {
@@ -274,9 +275,13 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
       if (result.success) {
         console.log("Code validation successful:", result.msg);
         setFeedbackMessage({ text: result.msg, type: 'success', context: 'code' });
-        // Set validation complete but don't hide the code form
         setIsValidationComplete(true);
-        
+        // Scroll code validation section into view
+        setTimeout(() => {
+          if (codeValidationRef.current) {
+            codeValidationRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100); // slight delay to ensure DOM updates
         // Set the accessedReportUrl from the fetched reportData
         if (reportData && reportData.reportURL) {
           setAccessedReportUrl(reportData.reportURL);
@@ -463,7 +468,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
           </div>
 
           {/* Get Instant Access Section */}
-          <div className="border-t border-slate-700/70 pt-6 mt-8">
+          <div className="border-t border-slate-700/70 pt-6 mt-8" ref={codeValidationRef}>
             <div className="flex items-center mb-1">
                 <h3 className="text-lg md:text-xl font-semibold text-white">Get Instant Access</h3>
             </div>
