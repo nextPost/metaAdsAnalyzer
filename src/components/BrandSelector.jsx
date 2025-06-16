@@ -160,9 +160,9 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
   // State to indicate if data is currently being loaded
   const [isLoading, setIsLoading] = useState(true);
   // State for the current sort key (e.g., 'name', 'followersRaw')
-  const [sortKey, setSortKey] = useState(null);
+  const [sortKey, setSortKey] = useState('followersRaw');
   // State for the current sort direction ('asc' or 'desc')
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   // State to hold the brand selected for confirmation before proceeding
   const [brandForConfirmation, setBrandForConfirmation] = useState(null);
   // State to manage the visibility of the mobile sort options dropdown
@@ -198,7 +198,6 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
               id: item.brand.replace(/\s+/g, '-').toLowerCase(),
               name: item.brand,
               logoUrl: item.pic,
-              reportUrl: item.reportURL,
               followersFormatted: item.followers,
               followersRaw: followersRaw,
               totalAdsFormatted: item.ads,
@@ -297,20 +296,11 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
 
   // Handler for selecting a brand from the sample reports carousel
   const handleSampleSelect = (sampleBrand) => {
-    // ADDED: Console log to confirm which brand object is being passed
-    console.log("Attempting to open report for:", sampleBrand.name);
-    console.log("Report URL:", sampleBrand.reportUrl);
-
-    // If the sample brand has a report URL, open it in a new tab
-    if (sampleBrand.reportUrl) {
-      window.open(sampleBrand.reportUrl, '_blank');
+    // Instead of opening the report directly, we'll select the brand
+    // This will trigger the normal flow through email validation
+    if (onSelectBrand) {
+      onSelectBrand(sampleBrand);
     }
-    // No longer clearing search or calling onBrandSelect here,
-    // as this button is specifically for opening the report link.
-    // If you want to still navigate to the full report view *after* opening the link,
-    // you would uncomment and re-enable the onBrandSelect call.
-    // if (onBrandSelect) onBrandSelect(sampleBrand);
-    // else console.log(`Sample brand selected: ${sampleBrand.name}.`);
   };
 
   // Handler for applying a sort option
