@@ -269,11 +269,13 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
         {headers: {'Origin': window.location.origin}}
       );
       const result = await response.json();
+      console.log("Code validation response:", result);
 
       if (result.success) {
         console.log("Code validation successful:", result.msg);
+        setFeedbackMessage({ text: result.msg, type: 'success', context: 'code' });
+        // Set validation complete but don't hide the code form
         setIsValidationComplete(true);
-        setIsAwaitingCode(false);
         
         // Set the accessedReportUrl from the fetched reportData
         if (reportData && reportData.reportURL) {
@@ -299,6 +301,7 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
       } else {
         console.error("Code validation failed:", result.msg);
         setFeedbackMessage({ text: result.msg, type: 'error', context: 'code' });
+        console.log("Setting feedback message:", { text: result.msg, type: 'error', context: 'code' });
         setValidationCode('');
       }
     } catch (error) {
@@ -308,6 +311,11 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
       setIsLoadingCode(false);
     }
   };
+
+  // Add effect to log feedback message changes
+  useEffect(() => {
+    console.log("Feedback message changed:", feedbackMessage);
+  }, [feedbackMessage]);
 
   useEffect(() => {
     if (feedbackMessage.text && !isValidationComplete) {
@@ -462,10 +470,81 @@ const ReportOverview = ({ selectedBrand, onBackToSelection }) => {
 
             {/* --- CONDITIONAL RENDERING HERE --- */}
             {isValidationComplete && accessedReportUrl ? (
-              // If validation is complete and we have a URL, show the ReportDisplay
-              <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
+              // If validation is complete and we have a URL, show forms first, then the report
+              <>
+                {/* Keep showing the forms with success message */}
+                <div className="mb-8">
+                  <form onSubmit={handleEmailSubmit} className="space-y-3">
+                    {!isAwaitingCode && (
+                       <p className="text-sm text-slate-400">Enter your email to receive the complete {displayReportData.brandName} Meta Ads Analysis report.</p>
+                    )}
+                    <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                      <div className="relative flex-grow">
+                        <Mail size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                        <input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          disabled={isAwaitingCode || isLoadingEmail}
+                          className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isAwaitingCode || isLoadingEmail}
+                        className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isLoadingEmail ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Send size={18} className="mr-2 hidden sm:inline" />}
+                        {isAwaitingCode ? "Email Submitted" : "Get Report Access"}
+                      </button>
+                    </div>
+                    {feedbackMessage.text && feedbackMessage.context === 'email' && (
+                      <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : feedbackMessage.type === 'success' ? 'text-green-400' : 'text-slate-400'}`}>
+                        {feedbackMessage.text}
+                      </div>
+                    )}
+                  </form>
+
+                  {/* Validation Code Form - keep visible after validation */}
+                  {isAwaitingCode && (
+                    <form onSubmit={handleCodeSubmit} className="space-y-3 mt-6 pt-4 border-t border-slate-700/50">
+                       <p className="text-sm text-slate-300">Please check {email} for a validation code.</p>
+                      <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                        <div className="relative flex-grow">
+                          <KeyRound size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                          <input
+                            type="text"
+                            placeholder="Enter validation code"
+                            value={validationCode}
+                            onChange={(e) => setValidationCode(e.target.value)}
+                            required
+                            disabled={isLoadingCode}
+                            className="w-full bg-[#172a33] border border-gray-800 text-white rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#FF6B45] focus:border-[#FF6B45] outline-none placeholder-slate-500 transition-colors disabled:opacity-70"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isLoadingCode}
+                          className="bg-[#FF6B45] hover:bg-[#E05230] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-150 text-sm flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isLoadingCode ? <Loader2 size={18} className="mr-2 animate-spin" /> : <CheckCircle size={18} className="mr-2 hidden sm:inline" />}
+                          Validate Code
+                        </button>
+                      </div>
+                      {feedbackMessage.text && feedbackMessage.context === 'code' && (
+                        <div className={`text-sm ${feedbackMessage.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                          {feedbackMessage.text}
+                        </div>
+                      )}
+                    </form>
+                  )}
+                </div>
+                <ReportDisplay reportUrl={accessedReportUrl} brandName={selectedBrand?.name} />
+              </>
             ) : (
-              // Otherwise, show the email/code forms
+              // Original form display for when validation is not complete
               <>
                 {/* Email Form */}
                 <form onSubmit={handleEmailSubmit} className="space-y-3">
