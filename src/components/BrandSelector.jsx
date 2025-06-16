@@ -402,7 +402,7 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
                             onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/64x64/7f1d1d/FFFFFF?text=ERR&font=Inter`; }}/>
                           <p className="text-xs text-slate-200 font-medium text-center truncate w-full mb-2 flex-grow">{sample.name}</p>
                           <button onClick={() => handleSampleSelect(sample)}
-                            className="absolute inset-0 m-auto w-36 h-10 bg-[#ff6b45] text-white text-xs font-semibold rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out flex items-center justify-center focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#ff6b45]"
+                            className="absolute inset-x-0 left-0 right-0 m-auto w-full max-w-full h-10 px-2 bg-[#ff6b45] text-white text-xs font-semibold rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out flex items-center justify-center focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#ff6b45]"
                             aria-label={`Open report for ${sample.name}`}>
                             <FileText size={14} className="mr-1.5" /> Open Report
                           </button>
