@@ -371,12 +371,12 @@ const BrandLeaderboard = ({ onSelectBrand }) => {
                 <h2 className="text-2xl font-semibold text-white mb-1 text-center">Meta Ads Analysis</h2>
                 {!brandForConfirmation && (
                     <p className="text-slate-400 mb-4 text-sm hidden md:block text-center">
-                    Search our database of 100+ leading brands across major industries and get a ready-to-use Google Slides deck analyzing any competitor's Meta ad strategy with actionable insights.
+                    Search our database of 1000+ leading brands across major industries and get a ready-to-use Google Slides deck analyzing any competitor's Meta ad strategy with actionable insights.
                     </p>
                 )}
                  {brandForConfirmation && (
                     <p className="text-slate-400 mb-4 text-sm text-center">
-                      Search our database of 100+ leading brands across major industries and get a ready-to-use Google Slides deck analyzing any competitor's Meta ad strategy with actionable insights.
+                      Search our database of 1000+ leading brands across major industries and get a ready-to-use Google Slides deck analyzing any competitor's Meta ad strategy with actionable insights.
                     </p>
                 )}
                 <div className="relative">
